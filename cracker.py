@@ -6,6 +6,7 @@ import argparse
 import sys
 import os
 import pyfiglet
+import psutil
 
 CapitaLetters = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G',
@@ -28,9 +29,13 @@ Numbers = {
 	'1','2','3','4','5','6','7','8','9','0'}
 
 def main():
+    # Parse arguments
     arguments = parser.parse_args()
     print (arguments.dictionary)
+
+    # Call function to display banner
     display_banner()
+
     # printing the equivalent hex value.
     # userInput = "Hello World"
     # result = hashlib.md5(userInput.encode())
@@ -53,12 +58,36 @@ def validate_file_format():
     print ("Validate File Format")
 
 def display_banner():
+    # Initialise pyfiglet
     ascii_banner = pyfiglet.figlet_format("PassCracker")
-    print(ascii_banner)
+    # Print out name banner and supported hashes and attacks
+    print (ascii_banner)
+    print ("This program was developed to crack a given hash using a variety of different methods.")
+    print ("Supported hashes: MD5, SHA1, SHA224, SHA256, SHA384, SHA512")
+    print ("Supported attack methods: Dictionary, Random String, Brute Force")
+
+def validate_arguments():
+    hashing_methods = {"md5", "sha1", "sha224", "sha256", "sha384", "sha512", "all"}
+    hashing_algorithm_found = False
+    arguments = parser.parse_args()
+
+    print (arguments.method.lower())
+    print (arguments.threads.isnumeric())
+
+    if (str(arguments.method.lower()) != "dictionary" or str(arguments.method.lower()) != "brute" or str(arguments.method.lower()) != "random" or str(arguments.method.lower()) != str("all")):
+        print ("Invalid method specified, please enter a valid choice from: dictionary, brute, random, all")
+    if (arguments.threads.isnumeric() != False or arguments.threads < 1 or arguments.threads > psutil.cpu_count(logical=False)):
+        print ("Please enter a valid number of threads, the maximum for your system is: ", psutil.cpu_count(logical=False))
+    for x in hashing_methods:
+        if (arguments.algorithm.lower() == x):
+            hashing_algorithm_found = True
+    if (hashing_algorithm_found == False):
+        print ("Invalid hashing method, please enter a valid choice from: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, All")
+
 
 
 if __name__ == "__main__":
-    # Initialize parser
+    # Initialise parser
     parser = argparse.ArgumentParser()
     
     # Adding optional argument
@@ -70,8 +99,9 @@ if __name__ == "__main__":
     
     # Read arguments from command line
     args = parser.parse_args()
-    
-    if len(sys.argv) > 1:
-        main()
-    else:
-        parser.print_help()
+
+    # Validate arguments
+    validate_arguments()
+
+    # Call main function
+    main()
