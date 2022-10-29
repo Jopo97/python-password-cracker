@@ -1,4 +1,5 @@
 import hashlib
+from re import L
 import threading
 import string
 import time
@@ -26,6 +27,10 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--dictionary", default = "Wordlist.txt", help = "Defined Word Dictionary")
     parser.add_argument("-t", "--threads", default = "1", help = "Specified Number of Threads (Minimum 1)")
     parser.add_argument("-a", "--algorithm", default = "All", help = "Selected Hashing Algorithm")
+    
+
+def display_header():
+
     
     # Read arguments from command line
     args = parser.parse_args()
