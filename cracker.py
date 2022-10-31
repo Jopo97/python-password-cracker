@@ -1,4 +1,3 @@
-from distutils import archive_util
 import hashlib
 import threading
 import string
@@ -40,7 +39,9 @@ def main():
     display_banner()
 
     # Call function to validate arguments passed in
-    validate_arguments
+    validate_arguments()
+
+
 
     # printing the equivalent hex value.
     # userInput = "Hello World"
@@ -57,12 +58,34 @@ def dictionary_attack(arguments):
     # Open the wordlist file using read permissions and set contents to variable
     dictionary = open(arguments.dictionary, "r")
 
-    testing_string = ""
-    # If the user has decided to output all attempts to the cli, then print out attempted string
-    if (arguments.output.lower() == "yes"):
-        print ("Attemping: ", testing_string)
+    while not cracked:
+        for line in dictionary:
+                # If the user has decided to output all attempts to the cli, then print out attempted string
+                if (arguments.output.lower() == "yes"):
+                    print ("Attemping: ", line)
 
-    dictionary.close() 
+                if (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "md5"):
+                    new_hash = hashlib.md5(line)
+                    hash_method = "MD5"
+                elif (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "sha1"):
+                    new_hash = hashlib.sha1(line)
+                    hash_method = "SHA1"
+                elif (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "sha224"):
+                    new_hash = hashlib.sha224(line)
+                    hash_method = "SHA224"
+                elif (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "sha256"):
+                    new_hash = hashlib.sha256(line)
+                    hash_method = "SHA256"
+                elif (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "sha384"):
+                    new_hash = hashlib.sha384(line)
+                    hash_method = "SHA384"
+                elif (arguments.algorithm.lower() == "all" or arguments.algorithm.lower() == "sha512"):
+                    new_hash = hashlib.sha512(line)
+                    hash_method = "SHA512"
+
+    # Close the dictionary file
+    dictionary.close()
+    return 
 
 
 # Function to brute force attack the hash
@@ -100,6 +123,7 @@ def brute_force_attack(arguments,testing_string_length, testing_string):
         cracked = True
         cracked_method = "Brute Force"
         return
+    
 
 # Function to use random strings from the dictionary
 def random_string_attack():
@@ -163,9 +187,12 @@ def validate_arguments():
     if (hashing_algorithm_found == False):
         print ("Invalid hashing method, please enter a valid choice from: MD5, SHA1, SHA224, SHA256, SHA384, SHA512 or All")
         quit()
+    # Check for if a valid display output choice has been inputted
     if (arguments.output.lower() != "yes" or arguments.output.lower() != "no"):
         print ("Invalid output choice specified, default of No has been chosen")
         arguments.output = "no"
+    # Check to see if the correct number of threads have been specified corresponding to the attack methods chosen
+
     # Call the dictionary validation function
     validate_dictionary(arguments.dictionary)
 
